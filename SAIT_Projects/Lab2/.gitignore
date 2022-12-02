@@ -1,0 +1,6 @@
+venv
+*.csv
+*.xlsx
+*.pkl
+*.pdf
+venv

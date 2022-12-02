@@ -3,19 +3,15 @@ import pandas as pd
 
 df = pd.read_excel("Online Retail.xlsx")
 
-
 # %%  Show the first 10 rows
 df.head(10)
-
 
 # %% Generate descriptive statistics regardless the datatypes
 df.describe(include="all")
 
-
 # %% Remove all the rows with null value and generate stats again
 df = df.dropna()
 df.describe(include="all")
-
 
 # %% Remove rows with invalid Quantity (Quantity being less than 0)
 df = df[df["Quantity"] >= 0]
@@ -41,66 +37,86 @@ df["Description"] = df["Description"].str.strip()
 
 df.describe(include="all")
 
-
 # %% Plot top 5 selling countries
 import matplotlib.pyplot as plt
 import seaborn as sns
 
 top5_selling_countries = df["Country"].value_counts()[:5]
-sns.barplot(x=top5_selling_countries.index, y=top5_selling_countries.values)
+ax = sns.barplot(x=top5_selling_countries.index, y=top5_selling_countries.values)
 plt.xlabel("Country")
 plt.ylabel("Amount")
 plt.title("Top 5 Selling Countries")
-
 
 # %% Plot top 20 selling products, drawing the bars vertically to save room for product description
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-top20_selling_Products = df["Description"].value_counts()[:20]
+summary = (
+    df.groupby("Description")
+    .sum()
+    .reset_index()
+    .sort_values("Quantity",ascending=False)
+    .head(20)
+)
 
-sns.barplot(x=top20_selling_Products.values, y=top20_selling_Products.index, )
+summary
+
+ax = sns.barplot(
+    data=summary,
+    x="Quantity",
+    y="Description",
+    palette="flare"
+)
 
 plt.xlabel("Amount")
-
 plt.ylabel("Products")
-
 plt.title("Top 20 Selling Products")
 
 # %% Focus on sales in UK
 
 df_uk = df[df["Country"] == "United Kingdom"]
-top20_selling_Products = df_uk["Description"].value_counts()[:20]
 
-sns.barplot(x=top20_selling_Products.values, y=top20_selling_Products.index, )
+summary = (
+    df_uk.groupby("Description")
+    .sum()
+    .reset_index()
+    .sort_values("Quantity",ascending=False)
+    .head(20)
+)
+
+summary
+
+ax = sns.barplot(
+    data=summary,
+    x="Quantity",
+    y="Description",
+    palette="flare"
+)
 
 plt.xlabel("Amount")
-
 plt.ylabel("Products")
-
 plt.title("Top 20 Selling Products in the UK")
+
 #%% Show gross revenue by year-month
 from datetime import datetime
-
-df["GrossRevenue"] = df['Quantity']*df['UnitPrice']
 
 df["YearMonth"] = df["InvoiceDate"].apply(
     lambda dt: datetime(year=dt.year, month=dt.month, day=1)
 )
 
-ax = sns.lineplot(x="YearMonth", y="GrossRevenue", data=df)
+df["GrossRevenue"] = df['Quantity']*df['UnitPrice']
+
+ax = sns.lineplot(
+    data=df.groupby("YearMonth").sum().reset_index(),
+    x="YearMonth",
+    y="GrossRevenue"
+)
 
 plt.title("Gross Revenue by Year-Month")
 plt.show()
-
 
 # %% save df in pickle format with name "UK.pkl" for next lab activity
 # we are only interested in InvoiceNo, StockCode, Description columns
 import pickle
 
-df_out = df[["InvoiceNo", "StockCode", "Description"]]
-df_out
-# output = open('UK.pkl', 'wb')
-# pickle.dump(df_out, output)
-# output.close()
-# %%
+df[["InvoiceNo", "StockCode", "Description"]].to_pickle("UK.pkl")

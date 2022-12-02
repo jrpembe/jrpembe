@@ -49,17 +49,32 @@ rules.sort_values("lift",ascending=False).head(10)
 
 # %% scatterplot support vs confidence
 import matplotlib.pyplot as plt
+import seaborn as sns
 
-sns.scatterplot(x=rules["support"],y=rules["confidence"], alpha=0.5)
+sns.scatterplot(
+    data=rules,
+    x="support",
+    y="confidence",
+    alpha=0.5
+)
 
-# plt.xlabel("Support")
-# plt.ylabel("Confidence")
-# plt.title("Support vs Confidence")
+plt.xlabel("Support")
+plt.ylabel("Confidence")
+plt.title("Support vs Confidence")
+plt.show()
 
 # %% scatterplot support vs lift
 
-sns.scatterplot(x=rules["support"],y=rules["lift"], alpha=0.5)
+sns.scatterplot(
+    data=rules,
+    x="support",
+    y="lift",
+    alpha=0.5
+)
 
-# plt.xlabel("Support")
-# plt.ylabel("Lift")
-# plt.title("Support vs Lift")
+
+plt.xlabel("Support")
+plt.ylabel("Lift")
+plt.title("Support vs Lift")
+plt.show()
+# %%

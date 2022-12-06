@@ -48,8 +48,6 @@ plt.ylabel("Amount")
 plt.title("Top 5 Selling Countries")
 
 # %% Plot top 20 selling products, drawing the bars vertically to save room for product description
-import seaborn as sns
-import matplotlib.pyplot as plt
 
 summary = (
     df.groupby("Description")

@@ -26,7 +26,7 @@ table = pd.DataFrame(te_ary, columns=te.columns_)
 
 sns.displot(table.sum()/table.shape[0])
 
-frequent_itemsets = apriori(table, min_support=0.02, use_colnames=True)
+frequent_itemsets = apriori(table, min_support=0.015, use_colnames=True)
 rules = association_rules(frequent_itemsets, min_threshold=0.1)
 
 # %% count of frequent itemsets that have more then 1/2/3 items,
@@ -51,7 +51,7 @@ rules.sort_values("lift",ascending=False).head(10)
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-sns.scatterplot(
+ax = sns.scatterplot(
     data=rules,
     x="support",
     y="confidence",
@@ -65,7 +65,7 @@ plt.show()
 
 # %% scatterplot support vs lift
 
-sns.scatterplot(
+ax = sns.scatterplot(
     data=rules,
     x="support",
     y="lift",

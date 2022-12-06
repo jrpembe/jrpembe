@@ -1,7 +1,7 @@
 # %% read data
 import pandas as pd
 
-df = pd.read_csv("seeds_dataset.txt", sep="\t+", header=None)
+df = pd.read_csv("seeds_dataset.txt", sep="\t+", header=None, engine='python')
 # 1 area A,
 # 2 perimeter P,
 # 3 compactness C = 4*pi*A/P^2,
@@ -41,11 +41,19 @@ sns.scatterplot(
 
 # %% also try lmplot and pairplot
 
+# sns.lmplot(
+#     data=df,
+#     hue="target"
+# )
+
+sns.pairplot(
+    data=df,
+    hue="target"
+)
 
 # %% determine the best numbmer of clusters
 from sklearn.cluster import KMeans
 from sklearn.metrics import homogeneity_score
-
 
 x = df.drop("target", axis=1)
 y = df["target"]
@@ -55,6 +63,11 @@ homogeneity = {}
 # use kmeans to loop over candidate number of clusters 
 # store inertia and homogeneity score in each iteration
 
+for k in range(1,15):
+    km = KMeans(n_clusters=k)
+    pred = km.fit_predict(x)
+    inertia[k] = km.inertia_
+    homogeneity[k] = homogeneity_score(y,pred)
 
 # %% 
 ax = sns.lineplot(
@@ -63,7 +76,7 @@ ax = sns.lineplot(
     color="blue",
     label="inertia",
     legend=None,
-)
+)   
 ax.set_ylabel("inertia")
 ax.twinx()
 ax = sns.lineplot(
@@ -76,3 +89,5 @@ ax = sns.lineplot(
 ax.set_ylabel("homogeneity")
 ax.figure.legend()
 
+
+# %%
